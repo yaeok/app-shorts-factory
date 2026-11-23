@@ -1,0 +1,33 @@
+{
+  "name": "app-shorts-factory",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "任意のアプリ定義とシーン構成から縦型ショート動画を生成するCLI",
+  "bin": {"app-shorts": "bin/app-shorts.mjs"},
+  "scripts": {
+    "build": "tsc --noEmit",
+    "test": "vitest run",
+    "dev": "remotion studio src/remotion/index.ts",
+    "cli": "tsx src/cli.ts"
+  },
+  "dependencies": {
+    "@remotion/bundler": "4.0.540",
+    "@remotion/renderer": "4.0.540",
+    "commander": "^14.0.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "remotion": "4.0.540",
+    "tsx": "^4.20.6",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@remotion/cli": "4.0.540",
+    "@types/node": "^24.10.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.6"
+  },
+  "engines": {"node": ">=22"}
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "app": {
+    "name": "Focus Flow",
+    "category": "仕事効率化",
+    "audience": "集中したいのに通知やタスクで気が散る人",
+    "valueProposition": "今日やることを1つに絞り、集中時間を見える化する"
+  },
+  "brand": {
+    "primaryColor": "#6C5CE7",
+    "secondaryColor": "#00CEC9",
+    "backgroundColor": "#111322",
+    "textColor": "#FFFFFF",
+    "fontFamily": "sans-serif"
+  },
+  "video": {
+    "title": "Focus Flow 機能紹介",
+    "fps": 30,
+    "width": 1080,
+    "height": 1920,
+    "scenes": [
+      {"type": "hook", "durationSeconds": 3, "eyebrow": "集中できない人へ", "headline": "今日もタスクが\n終わらない？", "layout": "center"},
+      {"type": "problem", "durationSeconds": 3, "headline": "原因は\nやることの多さ", "body": "同時に抱えるほど、集中は途切れます", "layout": "center"},
+      {"type": "feature", "durationSeconds": 4, "eyebrow": "Focus Flow", "headline": "今やる1つだけを\n大きく表示", "body": "迷わず集中を始められます", "layout": "center"},
+      {"type": "cta", "durationSeconds": 3, "headline": "今日の集中を\n始めよう", "body": "プロフィールのリンクから", "layout": "center", "backgroundColor": "#6C5CE7"}
+    ]
+  }
+}
