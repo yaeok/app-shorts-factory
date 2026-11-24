@@ -5,20 +5,17 @@ Node.js 22以上とChromeまたはChromiumが必要です。自動実行する�
 ```bash
 git clone https://github.com/yaeok/app-shorts-factory.git
 cd app-shorts-factory
-npm ci
-npm run build
-npm test
-npx app-shorts doctor
+npm run setup
 ```
+
+サンプルか実アプリを選ぶと、必要な情報と次に実行するコマンドが表示されます。途中の進捗を見るには `npm run setup -- <workspace> --status` を使います。入力済みの設定で始める場合は `--brief path/to/workspace.json` を指定できます。
 
 ## ローカルで翌日の投稿を試す
 
 架空のアプリ「そとノート」を使います。下の日時はシミュレーション用です。
 
 ```bash
-npx app-shorts interview campaigns/demo \
-  --brief examples/field-notes/workspace.json \
-  --content examples/field-notes/content.json
+npm run setup -- --demo
 npx app-shorts plan campaigns/demo --recipe repeatable-quiz --count 1 --seed 0
 npx app-shorts render-batch campaigns/demo
 ```
@@ -46,7 +43,7 @@ npx app-shorts publish-status campaigns/demo --simulate
 
 ## 自分のアプリで始める
 
-1. `npx app-shorts interview campaigns/my-app` でストアURL、対象者、提供価値、評価指標を入力します。既に整理した情報は `--brief` で渡せます。
+1. `npm run setup -- campaigns/my-app` でストアURL、対象者、提供価値、評価指標を入力します。既に整理した情報は `--brief` で渡せます。
 2. アイコンや実画面を `assets/` に置き、`workspace.json` の `creative.logo` や `creative.featureAsset` に相対パスを設定します。後者は `{"path":"demo.mp4","type":"video"}` の形式です。
 3. まず `product-introduction` で紹介動画を試します。定期シリーズは `content.json` に `id`、`prompt`、`answer`、任意の `explanation` を持つ素材を並べ、`repeatable-quiz` を選びます。一問一答、計算、数列、使い方の小ネタを同じ入力形式で扱えます。
 4. 素材と品質を確認し、`approve` します。現行テンプレートは無音です。

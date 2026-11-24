@@ -9,15 +9,20 @@ import {approvePublication, publicationRecords, schedule, tick, type Request} fr
 import {simulationAdapter} from '../src/operations/simulation';
 import {YouTube, uploadTag} from '../src/operations/youtube';
 import {aiProposal} from '../src/operations/ai';
-import {digest, doc, fileHash, save} from '../src/operations/store';
+import {onboard} from '../src/operations/onboarding';
+import {digest, doc, fileHash, save, workspace} from '../src/operations/store';
 import {WorkspaceSchema} from '../src/workflow-schema';
 import brief from '../examples/field-notes/workspace.json';
 import content from '../examples/field-notes/content.json';
 
 const roots: string[] = [];
-async function fixture() {
+async function testDirectory() {
   const root = await mkdtemp(path.join(tmpdir(), 'app-shorts-test-'));
   roots.push(root);
+  return root;
+}
+async function fixture() {
+  const root = await testDirectory();
   await setup(root, WorkspaceSchema.parse(brief), content);
   return root;
 }
@@ -142,4 +147,38 @@ test('AI proposal caches the validated response and returns the same plan inputs
   const sent = JSON.parse(String(mock.mock.calls[0]?.[1]?.body));
   expect(sent.store).toBe(false);
   expect(sent.text.format.type).toBe('json_schema');
+});
+
+test('setup installs sample inputs once and reports the next action from recorded artifacts', async () => {
+  const root = await testDirectory();
+  const lines: string[] = [];
+  const print = (message: string) => lines.push(message);
+  await onboard(root, {demo: true}, print);
+  expect(lines.join('\n')).toContain(' --recipe repeatable-quiz');
+  const filename = path.join(root, 'workspace.json');
+  const original = await fileHash(filename);
+  await onboard(root, {demo: true}, print);
+  expect(await fileHash(filename)).toBe(original);
+  const [plan] = await makePlans(root, await getRecipe(root, 'repeatable-quiz', 1), 1, 0);
+  if (!plan) throw new Error('fixture missing');
+  lines.length = 0;
+  await onboard(root, {status: true}, print);
+  expect(lines.find((line) => line.startsWith('次に実行'))).toContain('render-batch');
+  await approvedFixture(root, plan);
+  lines.length = 0;
+  await onboard(root, {status: true}, print);
+  expect(lines.find((line) => line.startsWith('次に実行'))).toContain(' qa ');
+  expect(await publicationRecords(root, 'youtube')).toEqual([]);
+});
+
+test('setup takes app inputs once and tells series creators which content file is missing', async () => {
+  const root = await testDirectory();
+  const lines: string[] = [];
+  const answers = ['my-app', 'おでかけノート', '', '週末に外出する人', '予定を忘れる', '予定を一覧で確認', '', '', 'views', '', '', '3'];
+  const ask = vi.fn(async (_prompt: string, fallback?: string) => answers.shift() || fallback || '');
+  await onboard(root, {series: true}, (line) => lines.push(line), ask);
+  expect((await workspace(root)).app.name).toBe('おでかけノート');
+  expect(lines.find((line) => line.startsWith('次に準備'))).toContain('content.json');
+  expect(lines.some((line) => line.startsWith('次に実行'))).toBe(false);
+  await onboard(root, {status: true, series: true}, () => {}, async () => { throw new Error('既存の設定を再入力させない'); });
 });

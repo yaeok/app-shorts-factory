@@ -5,7 +5,8 @@ import path from 'node:path';
 import {Command, InvalidArgumentError} from 'commander';
 import {z} from 'zod';
 import {WorkspaceSchema} from '../workflow-schema';
-import {ContentSchema, defaultBrand, getRecipe, loadPlan as getPlan, makePlans, plans, ProposalSchema, setup} from './planning';
+import {ContentSchema, getRecipe, loadPlan as getPlan, makePlans, plans, ProposalSchema, setup} from './planning';
+import {interview, onboard} from './onboarding';
 import {approveMedia, qa, renderPlan} from './media';
 import {approvePublication, checkpoints, publicationErrors, publicationRecords, publicationRequests, schedule, tick, type Checkpoint} from './publishing';
 import {importSnapshot, makeProposal, promote, replicate, review} from './learning';
@@ -29,7 +30,25 @@ const adapter = async (root: string, simulate: boolean | undefined, now: Date) =
   : (await import('./youtube')).youtubeFromEnvironment();
 const checkpoint = (input: string) => z.enum(['24h', '72h', '7d']).parse(input);
 
+async function withQuestions<T>(run: (ask?: Parameters<typeof interview>[1]) => Promise<T>) {
+  if (!stdin.isTTY) return run();
+  const reader = createInterface({input: stdin, output: stdout});
+  const ask = async (prompt: string, fallback?: string) =>
+    (await reader.question(prompt + (fallback ? ' [' + fallback + ']' : '') + ' > ')).trim() || fallback || '';
+  try { return await run(ask); }
+  finally { reader.close(); }
+}
+
 export function operations(program: Command) {
+  program.command('setup [workspace]').description('環境を確認し、アプリ設定と次の操作を案内')
+    .option('--demo', '同梱の架空アプリで試す')
+    .option('--brief <json>', '入力済みのワークスペースJSON')
+    .option('--content <json>', '繰り返し動画用の素材JSON')
+    .option('--series', '一問一答シリーズを案内')
+    .option('--status', '既存の進捗を確認')
+    .action(async (root: string | undefined, options) =>
+      withQuestions((ask) => onboard(root, options, (message) => console.log(message), ask)));
+
   program.command('doctor').description('実行環境を診断')
     .action(async () => {
       const node = Number(process.versions.node.split('.')[0]);
@@ -44,8 +63,10 @@ export function operations(program: Command) {
   program.command('interview <workspace>').description('対話またはJSONからアプリの運用設定を作成')
     .option('--brief <json>', '入力済みのワークスペースJSON').option('--content <json>', '繰り返し動画用の素材JSON')
     .action(async (root: string, options) => {
-      if (!options.brief && !stdin.isTTY) throw new Error('端末で起動するか --brief を指定してください');
-      const settings = options.brief ? await readDoc(options.brief, WorkspaceSchema) : await interview(root);
+      const settings = options.brief ? await readDoc(options.brief, WorkspaceSchema) : await withQuestions((ask) => {
+        if (!ask) throw new Error('端末で起動するか --brief を指定してください');
+        return interview(root, ask);
+      });
       await setup(root, settings, options.content ? await readDoc(options.content, ContentSchema) : undefined);
       json({workspace: path.resolve(root), id: settings.id, recipes: ['product-introduction', 'repeatable-quiz']});
     });
@@ -164,28 +185,4 @@ export function operations(program: Command) {
     .action(async (root, id, options) => json(await promote(root, environment(options), id, options.by, options.preview)));
   program.command('replicate <source> <learningId> <target>').description('別アプリ向けに採用済みレシピの下書きを作成')
     .requiredOption('--brief <json>').action(async (source, id, target, options) => json(await replicate(source, target, id, options.brief)));
-}
-
-async function interview(root: string) {
-  const reader = createInterface({input: stdin, output: stdout});
-  const ask = async (prompt: string, fallback?: string) => (await reader.question(prompt + (fallback ? ' [' + fallback + ']' : '') + ' > ')).trim() || fallback || '';
-  try {
-    const id = await ask('アプリ識別子（小文字英数字・ハイフン）', path.basename(path.resolve(root)).toLowerCase().replace(/[^a-z0-9-]/g, '-'));
-    const name = await ask('アプリ名');
-    const destinationUrl = await ask('ストアURL（任意）');
-    const audience = await ask('最初に届けたい人と利用場面');
-    const problem = await ask('その人が困っていること');
-    const promise = await ask('確認済みの機能で伝えたい価値');
-    const proof = (await ask('根拠のある機能・実績（任意、| 区切り）')).split('|').map((item) => item.trim()).filter(Boolean);
-    const prohibitedClaims = (await ask('避けたい表現（任意、| 区切り）')).split('|').map((item) => item.trim()).filter(Boolean);
-    const primaryKpi = await ask('評価指標', 'first_time_downloads');
-    const tone = await ask('動画の雰囲気', '親しみやすい');
-    const cta = await ask('動画の最後に促す行動', name);
-    const postsPerWeek = Number(await ask('週あたりの目標投稿数', '3'));
-    return WorkspaceSchema.parse({kind: 'workspace', schemaVersion: 1, id,
-      app: {name, destinationUrl: destinationUrl || undefined, audience, problem, promise, proof, prohibitedClaims, category: 'App'},
-      goals: {primaryKpi, secondaryKpis: ['views', 'likes', 'comments']},
-      creative: {brand: defaultBrand, tone, cta}, contentPillars: ['product-introduction', 'repeatable-series'],
-      channels: [{platform: 'youtube', enabled: false, approvalMode: 'manual'}], cadence: {postsPerWeek}});
-  } finally { reader.close(); }
 }

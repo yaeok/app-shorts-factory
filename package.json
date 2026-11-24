@@ -6,6 +6,7 @@
   "description": "任意のアプリ定義とシーン構成から縦型ショート動画を生成するCLI",
   "bin": {"app-shorts": "bin/app-shorts.mjs"},
   "scripts": {
+    "setup": "node scripts/setup.mjs",
     "build": "tsc --noEmit",
     "test": "vitest run",
     "skills:validate": "node scripts/validate-skills.mjs",
