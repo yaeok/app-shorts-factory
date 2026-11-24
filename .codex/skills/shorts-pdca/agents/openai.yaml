@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shorts PDCA"
+  short_description: "投稿指標を比較し次の単一改善を決定"
+  default_prompt: "Use $shorts-pdca to review checkpoint metrics and choose the next controlled experiment."

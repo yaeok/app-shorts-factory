@@ -8,8 +8,8 @@ const fallback: VideoProject = {
   app: {name: 'Sample App', category: 'Productivity', audience: '毎日を効率化したい人', valueProposition: '作業を簡単にします'},
   brand: {primaryColor: '#6C5CE7', secondaryColor: '#00CEC9', backgroundColor: '#111322', textColor: '#FFFFFF', fontFamily: 'sans-serif'},
   video: {title: 'Sample', fps: 30, width: 1080, height: 1920, scenes: [
-    {type: 'hook', durationSeconds: 3, headline: 'その作業、\nまだ手動ですか？', layout: 'center'},
-    {type: 'cta', durationSeconds: 3, headline: 'Sample Appで\n始めよう', layout: 'center'},
+    {type: 'hook', durationSeconds: 3, headline: 'その作業、\nまだ手動ですか？', assetType: 'image', layout: 'center'},
+    {type: 'cta', durationSeconds: 3, headline: 'Sample Appで\n始めよう', assetType: 'image', layout: 'center'},
   ]},
 };
 

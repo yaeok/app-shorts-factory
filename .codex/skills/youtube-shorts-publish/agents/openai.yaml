@@ -1,0 +1,4 @@
+interface:
+  display_name: "Publish YouTube Shorts"
+  short_description: "重複を防ぎYouTube Shortsを安全に投稿"
+  default_prompt: "Use $youtube-shorts-publish to prepare and safely publish this approved Short to YouTube."

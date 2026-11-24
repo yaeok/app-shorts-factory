@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shorts Factory"
+  short_description: "ショート動画運用を企画から改善まで統括"
+  default_prompt: "Use $shorts-factory to turn this app into a measurable Shorts operation."

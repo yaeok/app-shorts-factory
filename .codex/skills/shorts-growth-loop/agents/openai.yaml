@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shorts Growth Loop"
+  short_description: "実証済み知見を安全に学習・横展開"
+  default_prompt: "Use $shorts-growth-loop to promote proven learnings and instantiate an approved campaign."

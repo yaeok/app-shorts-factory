@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, Img, Sequence, interpolate, staticFile, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, Img, OffthreadVideo, Sequence, interpolate, staticFile, useCurrentFrame} from 'remotion';
 import type {Scene, VideoProject} from '../schema';
 
 const SceneView: React.FC<{scene: Scene; project: VideoProject; frames: number}> = ({scene, project, frames}) => {
@@ -7,7 +7,12 @@ const SceneView: React.FC<{scene: Scene; project: VideoProject; frames: number}>
   const opacity = interpolate(frame, [0, 8, Math.max(9, frames - 8), frames], [0, 1, 1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
   const translateY = interpolate(frame, [0, 12], [36, 0], {extrapolateRight: 'clamp'});
   const mediaFirst = scene.layout === 'media-top';
-  const asset = scene.asset ? <Img src={staticFile(scene.asset)} style={{width: '82%', maxHeight: 820, objectFit: 'contain', borderRadius: 44, boxShadow: '0 28px 80px #0005'}} /> : null;
+  const assetStyle = {width: '82%', maxHeight: 820, objectFit: 'contain' as const, borderRadius: 44, boxShadow: '0 28px 80px #0005'};
+  const asset = scene.asset
+    ? scene.assetType === 'video'
+      ? <OffthreadVideo src={staticFile(scene.asset)} muted style={assetStyle} />
+      : <Img src={staticFile(scene.asset)} style={assetStyle} />
+    : null;
   const copy = <div style={{display: 'flex', flexDirection: 'column', gap: 30, alignItems: 'center'}}>
     {scene.eyebrow && <div style={{fontSize: 38, fontWeight: 800, color: project.brand.secondaryColor, letterSpacing: 2}}>{scene.eyebrow}</div>}
     <div style={{fontSize: scene.type === 'hook' ? 104 : 82, fontWeight: 900, lineHeight: 1.12, textAlign: 'center', whiteSpace: 'pre-line'}}>{scene.headline}</div>

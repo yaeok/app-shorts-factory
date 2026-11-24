@@ -2,7 +2,7 @@ import {z} from 'zod';
 
 const HexColorSchema = z.string().regex(/^#[0-9a-fA-F]{6}$/, '6桁のHEXカラーを指定してください');
 
-export const SceneTypeSchema = z.enum(['hook', 'problem', 'feature', 'demo', 'proof', 'cta']);
+export const SceneTypeSchema = z.enum(['hook', 'problem', 'feature', 'demo', 'prompt', 'thinking', 'answer', 'proof', 'cta']);
 
 export const SceneSchema = z.object({
   type: SceneTypeSchema,
@@ -11,6 +11,7 @@ export const SceneSchema = z.object({
   body: z.string().max(180).optional(),
   eyebrow: z.string().max(30).optional(),
   asset: z.string().min(1).optional(),
+  assetType: z.enum(['image', 'video']).default('image'),
   layout: z.enum(['center', 'media-top', 'media-bottom']).default('center'),
   backgroundColor: HexColorSchema.optional(),
 });
@@ -45,4 +46,4 @@ export type VideoProject = z.infer<typeof VideoProjectSchema>;
 export type Scene = z.infer<typeof SceneSchema>;
 
 export const durationInFrames = (project: VideoProject) =>
-  Math.round(project.video.scenes.reduce((sum, scene) => sum + scene.durationSeconds, 0) * project.video.fps);
+  project.video.scenes.reduce((sum, scene) => sum + Math.round(scene.durationSeconds * project.video.fps), 0);

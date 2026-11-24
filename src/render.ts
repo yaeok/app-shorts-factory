@@ -3,7 +3,7 @@ import {mkdir} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {bundle} from '@remotion/bundler';
-import {renderMedia, selectComposition} from '@remotion/renderer';
+import {renderMedia, renderStill, selectComposition} from '@remotion/renderer';
 import type {VideoProject} from './schema';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -16,5 +16,15 @@ export const renderProject = async (project: VideoProject, assetsDirectory: stri
   const inputProps = {project};
   const composition = await selectComposition({serveUrl, id: 'AppShort', inputProps, timeoutInMilliseconds: 300_000, browserExecutable});
   await renderMedia({composition, serveUrl, codec: 'h264', audioCodec: 'aac', outputLocation: path.resolve(output), inputProps, timeoutInMilliseconds: 300_000, browserExecutable});
+  return path.resolve(output);
+};
+
+export const renderProjectStill = async (project: VideoProject, assetsDirectory: string, output: string, frame: number) => {
+  await mkdir(path.dirname(output), {recursive: true});
+  const serveUrl = await bundle({entryPoint: path.join(root, 'src/remotion/index.ts'), publicDir: path.resolve(assetsDirectory)});
+  const browserExecutable = process.env.REMOTION_BROWSER_EXECUTABLE ?? (existsSync(systemChrome) ? systemChrome : undefined);
+  const inputProps = {project};
+  const composition = await selectComposition({serveUrl, id: 'AppShort', inputProps, timeoutInMilliseconds: 300_000, browserExecutable});
+  await renderStill({composition, serveUrl, output: path.resolve(output), inputProps, frame, imageFormat: 'png', timeoutInMilliseconds: 300_000, browserExecutable});
   return path.resolve(output);
 };

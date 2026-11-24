@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shorts Direction Interview"
+  short_description: "アプリと投稿方針をヒアリングして定義"
+  default_prompt: "Use $shorts-intake to define the audience, direction, assets, KPI, and first series for this app."

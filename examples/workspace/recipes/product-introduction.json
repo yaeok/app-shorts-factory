@@ -1,0 +1,13 @@
+{
+  "kind": "recipe",
+  "schemaVersion": 1,
+  "id": "product-introduction",
+  "version": 1,
+  "mode": "product-introduction",
+  "generator": "template",
+  "objective": "Show one user problem, one differentiator, real product proof, and one CTA",
+  "sceneOrder": ["hook", "problem", "feature", "demo", "cta"],
+  "variableCandidates": ["hook", "proof asset", "cta wording"],
+  "fixedConditions": ["brand", "duration band", "publish time"],
+  "status": "draft"
+}

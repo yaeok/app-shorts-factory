@@ -1,0 +1,18 @@
+{
+  "kind": "workspace",
+  "schemaVersion": 1,
+  "id": "field-notes-example",
+  "app": {
+    "name": "そとノート",
+    "category": "観察記録",
+    "audience": "散歩中に見つけたものを記録したい人",
+    "problem": "散歩で見つけたもの、帰ると忘れていませんか？",
+    "promise": "見つけた場所と観察メモを一緒に残せる",
+    "proof": ["日付つきで観察を記録", "観察メモを一覧で振り返る", "場所とメモを一緒に保存"],
+    "prohibitedClaims": ["植物を必ず特定できる"]
+  },
+  "goals": {"primaryKpi": "views"},
+  "channels": [{"platform": "youtube", "enabled": false, "approvalMode": "manual"}],
+  "contentPillars": ["使い方", "観察クイズ"],
+  "cadence": {"postsPerWeek": 3}
+}

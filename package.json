@@ -8,6 +8,7 @@
   "scripts": {
     "build": "tsc --noEmit",
     "test": "vitest run",
+    "skills:validate": "node scripts/validate-skills.mjs",
     "dev": "remotion studio src/remotion/index.ts",
     "cli": "tsx src/cli.ts"
   },

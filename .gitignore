@@ -4,3 +4,7 @@ output/
 *.mp4
 *.tgz
 .DS_Store
+.env
+.env.*
+campaigns/
+shorts-workspace/

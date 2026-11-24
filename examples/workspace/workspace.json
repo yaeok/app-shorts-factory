@@ -1,0 +1,23 @@
+{
+  "kind": "workspace",
+  "schemaVersion": 1,
+  "id": "sample-app",
+  "app": {
+    "name": "Sample App",
+    "category": "Utility",
+    "audience": "A clearly defined primary user",
+    "problem": "The recurring problem this app solves",
+    "promise": "The verifiable outcome users receive",
+    "proof": [],
+    "prohibitedClaims": []
+  },
+  "goals": {
+    "primaryKpi": "first_time_downloads",
+    "secondaryKpis": ["store_views", "link_clicks", "profile_visits"]
+  },
+  "channels": [
+    {"platform": "youtube", "enabled": false, "approvalMode": "manual"}
+  ],
+  "contentPillars": ["product-introduction", "repeatable-tip"],
+  "cadence": {"postsPerWeek": 3}
+}

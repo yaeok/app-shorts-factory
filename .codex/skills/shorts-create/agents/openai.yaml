@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create App Shorts"
+  short_description: "設定とレシピから縦型動画を生成・検証"
+  default_prompt: "Use $shorts-create to plan, render, and visually QA a Short for this app."

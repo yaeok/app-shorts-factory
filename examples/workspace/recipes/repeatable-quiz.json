@@ -1,0 +1,13 @@
+{
+  "kind": "recipe",
+  "schemaVersion": 1,
+  "id": "repeatable-quiz",
+  "version": 1,
+  "mode": "repeatable-series",
+  "generator": "deterministic",
+  "objective": "Generate verified prompts repeatedly while testing one creative variable",
+  "sceneOrder": ["hook", "prompt", "thinking", "answer", "cta"],
+  "variableCandidates": ["hook", "difficulty", "explanation", "cta wording"],
+  "fixedConditions": ["answer validation", "brand", "duration band", "publish time"],
+  "status": "draft"
+}
